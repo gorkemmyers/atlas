@@ -1,0 +1,5 @@
+_yedek/
+_to_delete/
+node_modules/
+*.zip
+.DS_Store

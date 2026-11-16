@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fotoğraf denetimi</title>
+<style>
+  body { font: 15px/1.45 system-ui, sans-serif; margin: 24px; color: #111; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.lead { margin: 0 0 18px; color: #444; max-width: 70ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .c { border: 1px solid #ccc; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .c img { width: 100%; height: 190px; object-fit: contain; background: #f2f2f2; }
+  .k { font: 600 13px/1.3 ui-monospace, monospace; }
+  .bad { color: #b00020; font-weight: 600; }
+  .ok { color: #0a6b2b; font-weight: 600; }
+  .set { color: #555; font-size: 13px; }
+  a { color: #0b57d0; }
+</style>
+</head>
+<body>
+<h1>Fotoğraf denetimi</h1>
+<p class="lead">js/photos.js'teki her fotoğraf burada görünür. Görüntüyü açıklamayla karşılaştır: açıklama gerçekten bu fotoğrafı mı anlatıyor,
+aynı kümedeki tüm fotoğraflar aynı yeri mi gösteriyor, yazar ve lisans doğru mu? Doğruladıkça photos.js'te <b>v</b> değerini <b>'goz'</b> yap.
+Kırmızı satırlar eksik bilgidir. Bu sayfa internet ister (görüntüler Commons'tan gelir).</p>
+<div id="stat" class="lead"></div>
+<div class="grid" id="g"></div>
+<script src="../js/photos.js"></script>
+<script>
+(function () {
+  var P = window.PHOTOS || {}, S = window.PHOTO_SETS || {};
+  var inSet = {};
+  Object.keys(S).forEach(function (sid) { S[sid].forEach(function (k) { (inSet[k] = inSet[k] || []).push(sid); }); });
+  var g = document.getElementById('g'), n = 0, bad = 0, goz = 0;
+  Object.keys(P).sort().forEach(function (k) {
+    var p = P[k]; n++;
+    var url = 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(p.f.replace(/ /g, '_')) + '?width=640';
+    var page = 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(p.f.replace(/ /g, '_'));
+    var c = document.createElement('div'); c.className = 'c';
+    var gen = /katkıcı/i.test(p.by || '') || /ayrıntı kaynak/i.test(p.lic || '');
+    var issues = [];
+    if (gen) issues.push('Yazar/lisans Commons sayfasından okunup yazılmalı');
+    if (!inSet[k]) issues.push('Hiçbir kümede yok');
+    if (p.v !== 'goz') issues.push('Henüz gözle doğrulanmadı (v: ' + p.v + ')'); else goz++;
+    if (issues.length) bad++;
+    var im = document.createElement('img'); im.src = url; im.alt = p.cap || ''; im.loading = 'lazy';
+    im.onerror = function () { im.replaceWith(Object.assign(document.createElement('div'), { className: 'bad', textContent: 'GÖRÜNTÜ YÜKLENMEDİ: dosya adı yanlış olabilir' })); };
+    c.appendChild(im);
+    c.insertAdjacentHTML('beforeend',
+      '<div class="k">' + k + '</div><div>' + (p.cap || '') + '</div>' +
+      '<div class="set">Küme: ' + (inSet[k] || ['—']).join(', ') + ' · ' + (p.by || '?') + ' · ' + (p.lic || '?') + '</div>' +
+      '<a href="' + page + '" target="_blank" rel="noopener">Commons sayfası</a>' +
+      (issues.length ? '<div class="bad">' + issues.join('<br>') + '</div>' : '<div class="ok">Tamam</div>'));
+    g.appendChild(c);
+  });
+  document.getElementById('stat').textContent = n + ' fotoğraf · gözle doğrulanan: ' + goz + ' · eksik/uyarılı: ' + bad;
+})();
+</script>
+</body>
+</html>
