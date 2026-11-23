@@ -1,0 +1,13 @@
+# Cloudflare Workers Static Assets — canlı sitede yayınlanmayacak dahili depo dosyaları
+.git/
+.github/
+_yedek/
+_to_delete/
+dist/
+tools/
+js/_arsiv/
+*.md
+wrangler.jsonc
+wrangler.toml
+.DS_Store
+node_modules/
