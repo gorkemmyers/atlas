@@ -304,9 +304,18 @@
     Store.save();
   }
 
+  var STATIC_VIEWS = {
+    kaynaklar: { view: 'sources', title: 'Kaynaklar ve atıf — Atlas' },
+    hakkimizda: { view: 'about', title: 'Hakkımızda — Atlas' },
+    gizlilik: { view: 'privacy', title: 'Gizlilik ve Çerez Politikası — Atlas' },
+    'kullanim-kosullari': { view: 'terms', title: 'Kullanım Koşulları — Atlas' },
+    iletisim: { view: 'contact', title: 'İletişim — Atlas' }
+  };
+
   function route() {
     var raw = location.hash.replace(/^#/, '');
-    var p = R.parse(raw), hub = !p || p.hub;
+    var staticRec = STATIC_VIEWS[raw] || null;
+    var p = staticRec ? null : R.parse(raw), hub = !p || p.hub;
     var region = hub ? null : p.region, sec = hub ? null : p.section;
     /* eski adresleri (#rehber) yeni adrese çevir: geri tuşu bozulmaz, hashchange tetiklenmez */
     if (!hub && p.canon !== raw) { try { history.replaceState(null, '', '#' + p.canon); } catch (e) { /* kısıtlı çerçeve */ } }
@@ -315,8 +324,8 @@
     if (app.sheet) { app.sheet.destroy(); app.sheet = null; }
     U.clear(viewEl);
     viewEl.scrollTop = 0;
-    app.region = region; app.section = sec; app.current = sec ? sec.id : 'ana';
-    var vname = raw === 'kaynaklar' ? 'sources' : (sec ? sec.view : 'hub');
+    app.region = region; app.section = sec; app.current = sec ? sec.id : (staticRec ? raw : 'ana');
+    var vname = staticRec ? staticRec.view : (sec ? sec.view : 'hub');
     /* konu sayfasındaki “Alıştır” gibi bağlantılar from: konu kimliği taşır; ekran açılınca hazır ayar silinir, o yüzden şimdi okunur */
     paintNav(region, sec, app.launch && app.launch.from);
     document.body.setAttribute('data-view', vname);
@@ -327,7 +336,7 @@
       document.body.removeAttribute('data-region');
       document.body.removeAttribute('data-tone');
     }
-    document.title = region ? (sec.id === 'genel' ? region.name : region.short + ' · ' + sec.label) + ' — Atlas' : (raw === 'kaynaklar' ? 'Kaynaklar ve atıf — Atlas' : 'Atlas — GeoGuessr bölge tahmin rehberi');
+    document.title = region ? (sec.id === 'genel' ? region.name : region.short + ' · ' + sec.label) + ' — Atlas' : (staticRec ? staticRec.title : 'Atlas — GeoGuessr bölge tahmin rehberi');
     remember(region, sec);
     try {
       mounted = g.Views[vname].mount(viewEl, app);
@@ -377,6 +386,7 @@
   function boot() {
     initMode();
     appEl = document.getElementById('app');
+    U.clear(appEl);
     brandEl = h('a', { 'class': 'brand', id: 'brand-home', href: '#ana', 'aria-label': 'Atlas — ana sayfa' }, brandMark(),
       h('span', { 'class': 'brand-t' }, h('b', {}, 'Atlas'), h('small', {}, 'GeoGuessr rehberi')));
     appEl.appendChild(brandEl);
@@ -409,6 +419,7 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden) Store.flush(); });
     route();
     loadFonts();
+    if (g.Ads && g.Ads.boot) g.Ads.boot();
   }
 
   g.VNApp = app;

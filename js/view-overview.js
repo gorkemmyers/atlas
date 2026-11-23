@@ -60,6 +60,11 @@
         }))));
     }
 
+    var ovAd = g.Ads && g.Ads.slot('overviewEnd');
+    if (ovAd) inn.appendChild(ovAd);
+
+    inn.appendChild(UI.siteFooter());
+
     return { destroy: function () { } };
   }
 

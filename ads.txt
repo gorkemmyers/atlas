@@ -1,0 +1,3 @@
+# Atlas ads.txt
+# Google AdSense yayıncı kimliğini (ca-pub-XXXXXXXXXXXXXXXX) aldığında şu komutu çalıştır:
+#   python3 tools/set_domain.py --domain https://alanadin.com --adsense ca-pub-XXXXXXXXXXXXXXXX

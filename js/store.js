@@ -9,7 +9,7 @@
       items: {},                                   // anahtar -> {b: kutu 0-5, n: deneme, ok: doğru, t: son zaman}
       stats: { answered: 0, correct: 0, hinted: 0, days: {}, bestRun: 0 },
       set: {
-        theme: null, basemap: 'tiles',
+        theme: null, basemap: 'atlas',
         color: 'region', label: 'name', quizColors: true, quiz: null, sim: null,
         asColor: 'script', asLabel: 'name', asQuizColors: true, asQuiz: null, asSim: null,
         prefs: {},

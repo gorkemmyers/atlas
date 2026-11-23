@@ -3,8 +3,7 @@
   'use strict';
   var U = g.U, UI = g.UI;
   var h = U.h, s = U.s;
-  /* İki anahtar-siz Esri hostu: HTTP/1.1 eşzamanlı bağlantı sınırını ikiye katlar (6 → 12 paralel karo) */
-  var TILE_HOSTS = ['server.arcgisonline.com', 'services.arcgisonline.com'];
+  /* Yerleşik vektör atlas zemini (Natural Earth kamu malı); ticari kullanımda harici Esri karosu çağrılmaz. */
 
   /* Haritaya özgü temalar: ızgara aralığı, arka plan etiketleri ([boylam, enlem, metin, sınıf]), dünya etiketi hariç tutma */
   var THEMES = {
@@ -62,8 +61,7 @@
     this._zLayers = {};
     this._curZ = -1;
     this._baseZ = -1;
-    var savedBase = g.Store && g.Store.data && g.Store.data.set && g.Store.data.set.basemap;
-    this.basemap = o.basemap === false ? 'atlas' : (savedBase === 'atlas' ? 'atlas' : 'tiles');
+    this.basemap = 'atlas';
     this.cfg = null;
     if (o.controls && g.Kit) g.Kit.cfg(this);   // her haritada aynı "Harita ayarları" (js/kit.js)
     this._build();
@@ -129,7 +127,7 @@
       host.appendChild(this.tipEl);
       this.hintEl = h('div', { 'class': 'map-hint', hidden: true, 'data-ui': '1' });
       host.appendChild(this.hintEl);
-      this.attribEl = h('div', { 'class': 'map-attrib', hidden: true, 'data-ui': '1' }, '© Esri · OSM');
+      this.attribEl = h('div', { 'class': 'map-attrib', hidden: true, 'data-ui': '1' }, 'Natural Earth · OSM');
       host.appendChild(this.attribEl);
       if (this.o.controls) {
         this.ctrl = h('div', { 'class': 'map-ctrl', 'data-ui': '1' },
@@ -197,171 +195,17 @@
         this.gWorld.appendChild(lg);
       }
     },
-    setBasemap: function (mode) {
-      this.basemap = mode === 'atlas' ? 'atlas' : 'tiles';
-      if (g.Store && g.Store.data && g.Store.data.set) { g.Store.data.set.basemap = this.basemap; g.Store.save(); }
-      if (this.baseBtn) {
-        this.baseBtn.classList.toggle('on', this.basemap === 'tiles');
-        this.baseBtn.setAttribute('aria-pressed', this.basemap === 'tiles' ? 'true' : 'false');
-      }
+    setBasemap: function () {
+      this.basemap = 'atlas';
+      if (g.Store && g.Store.data && g.Store.data.set) { g.Store.data.set.basemap = 'atlas'; g.Store.save(); }
       this._syncTiles();
     },
-    _tileVariantName: function () {
-      return this.o.basemapLabels === false ? 'clean' : 'street';
-    },
-    _markTilesOk: function () {
-      if (this._disposed || this.basemap !== 'tiles' || this._tilesOk) return;
-      this._tilesOk = true;
-      this.host.classList.add('has-tiles');
-      if (this.attribEl) this.attribEl.hidden = false;
-    },
-    _pruneLayers: function (ka, kb, kc) {
-      var self = this;
-      Object.keys(this._zLayers).forEach(function (kz) {
-        var zNum = +kz;
-        if (zNum !== ka && zNum !== kb && zNum !== kc) {
-          var old = self._zLayers[kz];
-          if (old && old.el && old.el.parentNode) old.el.parentNode.removeChild(old.el);
-          delete self._zLayers[kz];
-        }
-      });
-    },
-    /* Tek bir yakınlaştırma katmanındaki görünür karoları kurar / önbellekten bağlar */
-    _tileLayer: function (zz, maxCount, svc, variant, vx0, vy0, vx1, vy1) {
-      var self = this, K = this.K, LON0 = this.G.lon0, YTOP = this.G.yTop;
-      var n = 1 << zz;
-      var lonMin = LON0 + vx0 / K, lonMax = LON0 + vx1 / K;
-      var mercMax = YTOP - vy0 / K, mercMin = YTOP - vy1 / K;
-      var wrap360 = !!this.T.wrap360;
-      var txRaw0 = Math.floor(((lonMin + 180) / 360) * n);
-      var txRaw1 = Math.floor(((lonMax + 180) / 360) * n);
-      var tx0 = wrap360 ? txRaw0 : U.clamp(txRaw0, 0, n - 1);
-      var tx1 = wrap360 ? Math.min(txRaw0 + n - 1, txRaw1) : U.clamp(txRaw1, 0, n - 1);
-      var ty0 = U.clamp(Math.floor(((180 - mercMax) / 360) * n), 0, n - 1);
-      var ty1 = U.clamp(Math.floor(((180 - mercMin) / 360) * n), 0, n - 1);
-      if ((tx1 - tx0 + 1) * (ty1 - ty0 + 1) > maxCount) return { loadedAll: false, anyOk: false };
-
-      var layer = this._zLayers[zz];
-      if (!layer) {
-        layer = this._zLayers[zz] = { el: h('div', { 'class': 'tile-z' }), ax: tx0, ay: ty0, pending: 0 };
-        this.tileEl.appendChild(layer.el);
-      }
-
-      var pending = 0, anyOk = false, tx, wtx, ty, key, item;
-      for (ty = ty0; ty <= ty1; ty++) {
-        for (tx = tx0; tx <= tx1; tx++) {
-          wtx = ((tx % n) + n) % n;
-          key = zz + '/' + tx + '/' + ty;
-          item = this._tileCache.get(key);
-          if (item && item.state === 'err') { this._tileCache.delete(key); item = null; }
-          if (!item) {
-            pending++;
-            var img = g.document.createElement('img');
-            img.className = 'tile-img';
-            img.alt = '';
-            img.style.left = ((tx - layer.ax) * 256) + 'px';
-            img.style.top = ((ty - layer.ay) * 256) + 'px';
-            item = { el: img, state: 'loading', key: key };
-            this._tileCache.set(key, item);
-            (function (it, im, lyr, zVal, url) {
-              im.onload = function () {
-                if (self._disposed || self._tileVariant !== variant) return;
-                it.state = 'ok';
-                im.classList.add('ok');
-                lyr.pending = Math.max(0, lyr.pending - 1);
-                self._markTilesOk();
-                if (zVal === self._curZ && lyr.pending === 0) self._pruneLayers(self._curZ, self._baseZ, -1);
-              };
-              im.onerror = function () {
-                it.state = 'err';
-                lyr.pending = Math.max(0, lyr.pending - 1);
-                if (im.parentNode) im.parentNode.removeChild(im);
-              };
-              im.src = url;
-            })(item, img, layer, zz, 'https://' + TILE_HOSTS[(wtx + ty) & 1] + '/ArcGIS/rest/services/' + svc + '/MapServer/tile/' + zz + '/' + ty + '/' + wtx);
-            layer.el.appendChild(img);
-          } else if (item.state === 'ok') {
-            anyOk = true;
-            if (!item.el.parentNode) layer.el.appendChild(item.el);
-          } else {
-            pending++;
-          }
-        }
-      }
-      layer.pending = pending;
-      return { loadedAll: pending === 0, anyOk: anyOk };
-    },
     _syncTiles: function () {
-      var self = this, host = this.host, el = this.tileEl;
-      if (!el) return;
-      if (this.basemap !== 'tiles' || this.o.basemap === false) {
-        this._tilesOk = false;
-        host.classList.remove('has-tiles');
-        if (this.attribEl) this.attribEl.hidden = true;
-        el.hidden = true;
-        return;
-      }
-      el.hidden = false;
-      var variant = this._tileVariantName();
-      if (variant !== this._tileVariant) {
-        this._tileVariant = variant;
-        this._tilesOk = false;
-        host.classList.remove('has-tiles');
-        if (this.attribEl) this.attribEl.hidden = true;
-        U.clear(el);
-        this._tileCache.clear();
-        this._zLayers = {};
-        this._curZ = -1;
-        this._baseZ = -1;
-      }
-      if (typeof g.document === 'undefined' || !el.appendChild) return;
-
-      var c = this.cam, K = this.K, LON0 = this.G.lon0, YTOP = this.G.yTop;
-      var maxZ = variant === 'clean' ? 9 : 12;
-      var z = U.clamp(Math.round(Math.log((360 * K * c.k) / 256) / Math.LN2), 2, maxZ);
-      var baseZ = z >= 5 ? Math.min(4, z - 2) : (z === 4 ? 2 : -1);
-      var vw = this.W / c.k, vh = this.H / c.k;
-      var vx0 = c.cx - vw / 2, vy0 = c.cy - vh / 2;
-      var vx1 = c.cx + vw / 2, vy1 = c.cy + vh / 2;
-
-      if (this._curZ !== z) {
-        this._pruneLayers(this._curZ, z, baseZ);
-        this._curZ = z;
-      }
-      this._baseZ = baseZ;
-
-      var svc = variant === 'clean' ? 'Ocean/World_Ocean_Base' : 'World_Street_Map';
-      /* Önce düşük çözünürlüklü altlık (4-6 karo, anında deniz/kara), ardından net hedef katman */
-      var resBase = baseZ >= 2 ? this._tileLayer(baseZ, 24, svc, variant, vx0, vy0, vx1, vy1) : { loadedAll: true, anyOk: false };
-      var resZ = this._tileLayer(z, 96, svc, variant, vx0, vy0, vx1, vy1);
-      if (resZ.anyOk || resBase.anyOk) this._markTilesOk();
-
-      /* Mevcut, önceki ve altlık zoom katmanlarının CSS dönüşümünü milimetrik SVG hizasına kitle */
-      Object.keys(this._zLayers).forEach(function (kz) {
-        var lz = self._zLayers[kz], nz = 1 << (+kz);
-        var xAnc = ((lz.ax / nz) * 360 - 180 - LON0) * K;
-        var yAnc = (YTOP - (180 - (lz.ay / nz) * 360)) * K;
-        var ox = (xAnc - vx0) * c.k, oy = (yAnc - vy0) * c.k;
-        var sc = (360 * K * c.k) / (256 * nz);
-        lz.el.style.transform = 'translate3d(' + ox.toFixed(2) + 'px,' + oy.toFixed(2) + 'px,0) scale(' + sc.toFixed(6) + ')';
-        lz.el.style.zIndex = (+kz === z) ? '3' : (+kz === baseZ ? '1' : '2');
-      });
-
-      if (resZ.loadedAll) this._pruneLayers(z, baseZ, -1);
-      if (this._tileCache.size > 192) {
-        var activeEls = Object.keys(this._zLayers).map(function (kz) { return self._zLayers[kz].el; });
-        var it = this._tileCache.entries();
-        while (this._tileCache.size > 144) {
-          var nx = it.next();
-          if (nx.done) break;
-          var oldIt = nx.value[1];
-          var inActive = oldIt.el && activeEls.indexOf(oldIt.el.parentNode) >= 0;
-          if (!inActive) {
-            if (oldIt.el && oldIt.el.parentNode) oldIt.el.parentNode.removeChild(oldIt.el);
-            this._tileCache.delete(nx.value[0]);
-          }
-        }
-      }
+      if (!this.tileEl) return;
+      this._tilesOk = false;
+      this.host.classList.remove('has-tiles');
+      if (this.attribEl) this.attribEl.hidden = true;
+      this.tileEl.hidden = true;
     },
 
     _ensureLand: function () {

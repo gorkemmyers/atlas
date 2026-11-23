@@ -8,17 +8,44 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Atlas">
 <meta property="og:title" content="Atlas — GeoGuessr bölge tahmin rehberi">
 <meta property="og:description" content="Direk, tabela, alfabe ve alan kodu ipuçlarıyla bölge tahmini: etkileşimli harita, aralıklı tekrar ve simülasyon. Ücretsiz.">
 <meta property="og:locale" content="tr_TR">
-<meta name="twitter:card" content="summary">
+<!-- META:SEO:START -->
+<link rel="canonical" href="https://atlas.gorkemugurguler.workers.dev/">
+<meta property="og:url" content="https://atlas.gorkemugurguler.workers.dev/">
+<meta property="og:image" content="https://atlas.gorkemugurguler.workers.dev/og-image.svg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Atlas", "description": "GeoGuessr için Türkçe bölge tahmin rehberi: 9 bölge, etkileşimli harita, aralıklı tekrar ve simülasyon.", "inLanguage": "tr", "url": "https://atlas.gorkemugurguler.workers.dev/"}</script>
+<!-- META:SEO:END -->
+<!-- ADSENSE:HEAD:START -->
+<!-- ADSENSE:HEAD:END -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="manifest.json">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="app" id="app"></div>
-<noscript><p style="padding:24px;font:16px system-ui">Atlas çalışmak için JavaScript gerektirir.</p></noscript>
+<div class="app" id="app"><!-- SSR:START -->
+<div class="ssr-shell">
+  <header>
+    <h1>Atlas — GeoGuessr Bölge Tahmin Rehberi</h1>
+    <p>Her ülke için bölge tahminine en çok yarayan 1–3 ana konu: etkileşimli harita, çözücü, doğrulanmış görsel kartlar, aralıklı tekrar (Leitner) ve simülasyon. Tamamen ücretsiz ve Türkçe.</p>
+  </header>
+  <main>
+    <h2>Kapsanan 9 bölge ve okuma rehberleri</h2>
+    <ul class="ssr-grid"><li><strong><a href="rehber/vietnam.html">Vietnam (VN)</a></strong><span>63 il: bölgeler, 02x alan kodları ve il adı mantığı.</span> · <a href="#vietnam">Haritada aç</a></li><li><strong><a href="rehber/guney-asya.html">Güney Asya (GA)</a></strong><span>17 yazı sistemi, 42 yer: tabeladaki yazıdan eyaleti tahmin et.</span> · <a href="#guneyasya">Haritada aç</a></li><li><strong><a href="rehber/turkiye.html">Türkiye (TR)</a></strong><span>Üç konu: tabeladaki telefon alan kodu; sokak levhası ve rögar kapağındaki belediye adı; çay, sera, taş yapı gibi bölgeyi gösteren görünümler.</span> · <a href="#turkiye">Haritada aç</a></li><li><strong><a href="rehber/rusya.html">Rusya (RU)</a></strong><span>İki şey işe yarar: büyük yolların numarası (М-7, Р-254…) ve cumhuriyetlerdeki Rusça&#x27;da olmayan harfler (Ә, Җ, Ӏ…). Telefon ve posta kodları pratikte işe yaramaz, o yüzden yok.</span> · <a href="#russia">Haritada aç</a></li><li><strong><a href="rehber/japonya.html">Japonya (JP)</a></strong><span>İki şey işe yarar: tabelalardaki il adını kanjiden okumak ve elektrik direğindeki şirket adından bölgeyi bulmak. Telefon kodları pratikte işe yaramaz, o yüzden yok.</span> · <a href="#japan">Haritada aç</a></li><li><strong><a href="rehber/endonezya.html">Endonezya (ID)</a></strong><span>Plaka yok: oyunda plakalar bulanık. Bölgeyi söyleyen iki şey var: tabelalardaki yerel yazılar (Java, Sunda, Bali, Lontara) ve bölgesel görünüm (çatılar, kazık evler, palmiye plantasyonları, savan, teras). Telefon kodları pratikte işe yaramaz, o yüzden yok.</span> · <a href="#indonesia">Haritada aç</a></li><li><strong><a href="rehber/brezilya.html">Brezilya (BR)</a></strong><span>Üç şey işe yarar: yol levhasındaki eyalet kısaltması (SP-310, MG-050…), duvarlara boyanmış telefon numarasındaki DDD ve bölgeyi gösteren elektrik direği ile manzara (kuzeydoğuda merdiven direk, güney yaylalarında araucária, kuzeydoğunun kurak içinde kaktüs).</span> · <a href="#brazil">Haritada aç</a></li><li><strong><a href="rehber/meksika.html">Meksika (MX)</a></strong><span>İki şey işe yarar: duvardaki telefon numarasının bölge kodu (LADA) ve bölgeyi gösteren bitki ile manzara (dev sütun kaktüs, sıralı agave tarlası, sazlı Maya evi, uzaktaki karlı volkan). İlk rakam büyük bölgeyi, tam kod eyaleti verir.</span> · <a href="#mexico">Haritada aç</a></li><li><strong><a href="rehber/guney-kore.html">Güney Kore (KR)</a></strong><span>Üç şey işe yarar: tabelada okuduğun Hangul şehir adından ili bulmak ve numaradaki alan kodundan bölgeyi bulmak. Üçüncüsü bölgeyi gösteren manzara: Jeju, Gangwon yaylası, Namhae, Boseong.</span> · <a href="#guneykore">Haritada aç</a></li></ul>
+  </main>
+  <footer>
+    <p><a href="hakkimizda.html">Hakkımızda</a> · <a href="gizlilik.html">Gizlilik ve Çerezler</a> · <a href="kullanim-kosullari.html">Kullanım Koşulları</a> · <a href="kaynaklar.html">Kaynaklar ve Atıf</a> · <a href="iletisim.html">İletişim</a></p>
+    <p>Atlas, GeoGuessr için hazırlanmış bağımsız ve resmî olmayan bir çalışma rehberidir; GeoGuessr AB ile herhangi bir bağlantısı veya ortaklığı yoktur.</p>
+  </footer>
+</div>
+<!-- SSR:END --></div>
+<noscript><p style="padding:24px;font:16px system-ui">Etkileşimli harita ve alıştırmalar için JavaScript gereklidir; yukarıdaki ülke rehberlerini ve yasal sayfaları JavaScript olmadan da okuyabilirsin.</p></noscript>
+<script src="js/site-config.js"></script>
 <script src="js/data.js"></script>
 <script src="js/names.js"></script>
 <script src="js/geo.js"></script>
@@ -34,6 +61,7 @@
 <script src="js/scripts-bank.js"></script>
 <script src="js/regions.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/ads.js"></script>
 <script src="js/kit.js"></script>
 <script src="js/photos.js"></script>
 <script src="js/photos-local.js"></script>
@@ -56,6 +84,7 @@
 <script src="js/view-progress.js"></script>
 <script src="js/view-hub.js"></script>
 <script src="js/view-sources.js"></script>
+<script src="js/view-legal.js"></script>
 <script src="js/view-overview.js"></script>
 <script src="js/country-engine.js"></script>
 <script src="js/geo-brazil.js"></script>

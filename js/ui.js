@@ -346,5 +346,34 @@
       s('text', { 'class': 'ring-t', x: size / 2, y: size / 2, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, Math.round(frac * 100) + '%'));
   };
 
+  /* ortak alt bilgi (tüm sayfalarda tek çatı: yasal bağlantılar, marka feragatnamesi, çerez tercihleri) */
+  UI.siteFooter = function (opts) {
+    opts = opts || {};
+    var cfg = g.ATLAS_CONFIG || {};
+    var isFile = false;
+    try { isFile = g.location && g.location.protocol === 'file:'; } catch (e) { isFile = false; }
+    function hrefFor(slug, hash) { return isFile ? '#' + hash : slug; }
+    var links = [
+      { label: 'Hakkımızda', href: hrefFor('hakkimizda.html', 'hakkimizda') },
+      { label: 'Gizlilik ve Çerezler', href: hrefFor('gizlilik.html', 'gizlilik') },
+      { label: 'Kullanım Koşulları', href: hrefFor('kullanim-kosullari.html', 'kullanim-kosullari') },
+      { label: 'Kaynaklar ve Atıf', href: hrefFor('kaynaklar.html', 'kaynaklar') },
+      { label: 'İletişim', href: hrefFor('iletisim.html', 'iletisim') }
+    ];
+    var nav = h('nav', { 'class': 'sf-links', 'aria-label': 'Site bilgileri ve yasal sayfalar' },
+      links.map(function (it) { return h('a', { href: it.href }, it.label); }).concat([
+        h('button', {
+          type: 'button', 'class': 'sf-btn',
+          onclick: function () { if (g.Ads && g.Ads.openConsent) g.Ads.openConsent(); }
+        }, 'Çerez tercihleri')
+      ]));
+    return h('footer', { 'class': 'site-foot' + (opts.compact ? ' site-foot-sm' : '') },
+      nav,
+      h('p', { 'class': 'sf-note' },
+        cfg.disclaimer || 'Atlas, GeoGuessr için hazırlanmış bağımsız ve resmî olmayan bir çalışma rehberidir; GeoGuessr AB ile bağlantısı yoktur.'),
+      h('p', { 'class': 'sf-meta' },
+        'Fotoğraflar Wikimedia Commons’tan serbest lisanslarıyla, yol çizgileri © OpenStreetMap katkıcılarından (ODbL) alınmıştır.'));
+  };
+
   g.UI = UI;
 })(typeof window !== 'undefined' ? window : globalThis);

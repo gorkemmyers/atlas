@@ -208,9 +208,8 @@
           h('b', {}, 'Depolama kapalı. '), 'İlerleme bu sekmede geçici tutuluyor; aşağıdan yedek alabilirsin.')));
       }
 
-      inn.appendChild(h('footer', { 'class': 'hub-foot' },
-        h('span', {}, 'Fotoğraflar Wikimedia Commons’tan, yazar ve lisansları ile. '),
-        h('a', { href: '#kaynaklar' }, 'Kaynaklar ve atıf')));
+      var hubAd = g.Ads && g.Ads.slot('hubMid');
+      if (hubAd) inn.appendChild(hubAd);
 
       /* veri ve yedek: ana alanı kaplamasın diye kapalı açılır bölüm */
       inn.appendChild(h('details', { 'class': 'fold hub-backup', id: 'hub-backup' },
@@ -223,6 +222,20 @@
             h('button', { type: 'button', 'class': 'btn btn-sm', id: 'pg-import', onclick: importFlow }, 'Yedeği yapıştır'),
             h('button', { type: 'button', 'class': 'btn btn-sm btn-danger-o', id: 'pg-reset', onclick: resetFlow }, UI.icon('trash', 14), 'Sıfırla')),
           h('p', { 'class': 'micro' }, 'Tüm bölgelerin ilerlemesi bu tarayıcıda saklanır.'))));
+
+      /* okuma/arama motorları ve doğrudan paylaşım için statik ülke rehberleri */
+      var slugs = g.ATLAS_CONFIG && g.ATLAS_CONFIG.guideSlugs;
+      var isWeb = false;
+      try { isWeb = g.location && g.location.protocol !== 'file:'; } catch (e) { isWeb = false; }
+      if (slugs && isWeb) {
+        inn.appendChild(h('nav', { 'class': 'hub-guides', 'aria-label': 'Ülke rehber sayfaları' },
+          h('span', { 'class': 'micro' }, 'Okuma rehberleri: '),
+          R.list.map(function (r0) {
+            return slugs[r0.id] ? h('a', { href: slugs[r0.id] }, r0.name) : null;
+          })));
+      }
+
+      inn.appendChild(UI.siteFooter());
     }
 
     function importFlow() {

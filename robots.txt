@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /dist/
+Disallow: /tools/
+
+User-agent: Mediapartners-Google
+Allow: /
+
+Sitemap: https://atlas.gorkemugurguler.workers.dev/sitemap.xml

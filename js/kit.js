@@ -124,10 +124,8 @@
     render: function () {
       var self = this, map = this.map;
       U.clear(this.body);
-      /* Zemin */
-      var base;
-      if (map.o.basemap === false) base = this._static('Sade atlas');
-      else base = UI.seg([{ v: 'tiles', label: 'Yol haritası' }, { v: 'atlas', label: 'Sade atlas' }], map.basemap, function (v) { map.setBasemap(v); }, { label: 'Zemin' });
+      /* Zemin: yerleşik vektör atlas (Natural Earth kamu malı) */
+      var base = this._static('Sade atlas · yerleşik vektör harita');
       this.body.appendChild(this._field('Zemin', base));
       this.body.appendChild(this._rowFor('labels', 'Etiketler', this.rows.labels));
       this.body.appendChild(this._rowFor('color', 'Renk', this.rows.color));
@@ -201,11 +199,49 @@
     var s = (g.PHOTO_SETS || {})[setId];
     return s ? s.filter(function (k) { return !!Kit.photo(k); }) : [];
   };
+  var LIC_URLS = {
+    'CC0': 'https://creativecommons.org/publicdomain/zero/1.0/',
+    'Public domain': 'https://commons.wikimedia.org/wiki/Commons:Licensing#Material_in_the_public_domain',
+    'CC BY 2.0': 'https://creativecommons.org/licenses/by/2.0/',
+    'CC BY 2.5': 'https://creativecommons.org/licenses/by/2.5/',
+    'CC BY 3.0': 'https://creativecommons.org/licenses/by/3.0/',
+    'CC BY 3.0 br': 'https://creativecommons.org/licenses/by/3.0/br/',
+    'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/',
+    'CC BY-SA 2.0': 'https://creativecommons.org/licenses/by-sa/2.0/',
+    'CC BY-SA 2.5': 'https://creativecommons.org/licenses/by-sa/2.5/',
+    'CC BY-SA 3.0': 'https://creativecommons.org/licenses/by-sa/3.0/',
+    'CC BY-SA 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/'
+  };
+  Kit.licenseUrl = function (lic) { return LIC_URLS[lic] || ''; };
   Kit.creditLine = function (key) {
     var p = Kit.photo(key);
     if (!p) return '';
     if (p.svg) return 'Çizim: ' + (p.by || 'Atlas') + ' · özgün şematik çizim (örnektir; renk ve oran yaklaşıktır)';
-    return 'Fotoğraf: ' + (p.by || 'bilinmiyor') + ' · ' + (p.lic || '') + ' · Wikimedia Commons';
+    var mod = (p.crop || (p.marks && p.marks.length)) ? ' (kırpıldı/işaretlendi)' : '';
+    return 'Fotoğraf: ' + (p.by || 'bilinmiyor') + ' · ' + (p.lic || '') + mod + ' · Wikimedia Commons';
+  };
+  /* CC BY / CC BY-SA atıf düğümü: yazar, tıklanabilir lisans bağlantısı, uyarlama notu ve kaynak sayfa */
+  Kit.fillCredit = function (el, key, opts) {
+    opts = opts || {};
+    U.clear(el);
+    var p = Kit.photo(key);
+    if (!p) return;
+    if (p.svg) { el.textContent = Kit.creditLine(key); return; }
+    el.appendChild(document.createTextNode('Fotoğraf: ' + (p.by || 'bilinmiyor') + ' · '));
+    var lurl = Kit.licenseUrl(p.lic);
+    if (lurl && !opts.quiz) {
+      el.appendChild(h('a', { href: lurl, target: '_blank', rel: 'noopener noreferrer' }, p.lic || 'Lisans'));
+    } else {
+      el.appendChild(document.createTextNode(p.lic || ''));
+    }
+    if (!opts.quiz && (p.crop || (p.marks && p.marks.length))) {
+      el.appendChild(document.createTextNode(' (kırpıldı/işaretlendi)'));
+    }
+    el.appendChild(document.createTextNode(' · Wikimedia Commons'));
+    if (!opts.quiz && Kit.photoPage(key)) {
+      el.appendChild(document.createTextNode(' · '));
+      el.appendChild(h('a', { href: Kit.photoPage(key), target: '_blank', rel: 'noopener noreferrer' }, opts.longLink ? 'Kaynak sayfa' : 'Kaynak'));
+    }
   };
 
   /* =====================================================================
@@ -272,9 +308,7 @@
         markEls(p, { x: 0, y: 0, w: 1, h: 1 }).forEach(function (m) { frame.appendChild(m); });
         var lg = legendEl(p); if (lg) legend.appendChild(lg);
       }
-      U.clear(cr);
-      cr.appendChild(document.createTextNode(Kit.creditLine(keys[i]) + (lo.quiz || !Kit.photoPage(keys[i]) ? '' : ' · ')));
-      if (!lo.quiz && Kit.photoPage(keys[i])) cr.appendChild(h('a', { href: Kit.photoPage(keys[i]), target: '_blank', rel: 'noopener' }, 'Kaynak sayfa'));
+      Kit.fillCredit(cr, keys[i], { quiz: !!lo.quiz, longLink: true });
       count.textContent = (i + 1) + ' / ' + keys.length;
       fit();
     }
@@ -361,11 +395,7 @@
       capEl.hidden = opts.quiz || !p.cap;
       U.clear(legendBox);
       if (!opts.quiz && p.d) { var lg = legendEl(p); if (lg) legendBox.appendChild(lg); }
-      credit.textContent = Kit.creditLine(keys[cur]);
-      if (!opts.quiz && Kit.photoPage(keys[cur])) {
-        credit.appendChild(document.createTextNode(' · '));
-        credit.appendChild(h('a', { href: Kit.photoPage(keys[cur]), target: '_blank', rel: 'noopener' }, 'Kaynak'));
-      }
+      Kit.fillCredit(credit, keys[cur], { quiz: !!opts.quiz });
       count.textContent = (cur + 1) + ' / ' + keys.length;
       fig.setAttribute('data-cur', String(cur));
     }
