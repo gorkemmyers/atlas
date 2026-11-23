@@ -146,7 +146,7 @@
         h('div', { 'class': 'hub-top' },
           h('div', { 'class': 'hub-title' },
             h('h1', {}, 'GeoGuessr Atlası'),
-            h('p', { 'class': 'lead' }, 'Harita keşfi, konu rehberi, pratik ve simülasyon.')),
+            h('p', { 'class': 'lead' }, 'Harita keşfi, konu rehberi, pratik ve simülasyon')),
           kpis)));
 
       inn.appendChild(h('section', { 'class': 'pm-sec', 'aria-label': 'Dünya haritası' },
@@ -217,7 +217,7 @@
         h('div', { 'class': 'fold-body' },
           h('div', { 'class': 'row row-wrap' },
             h('button', { type: 'button', 'class': 'btn btn-sm', id: 'pg-export', onclick: function () {
-              U.copy(Store.exportText()).then(function (ok) { UI.toast(ok ? 'Yedek panoya kopyalandı.' : 'Kopyalanamadı; metni elle seçmen gerekebilir.', ok ? null : 'bad'); });
+              U.copy(Store.exportText()).then(function (ok) { UI.toast(ok ? 'Yedek panoya kopyalandı' : 'Kopyalanamadı; metni elle seçmen gerekebilir', ok ? null : 'bad'); });
             } }, UI.icon('copy', 14), 'Yedeği kopyala'),
             h('button', { type: 'button', 'class': 'btn btn-sm', id: 'pg-import', onclick: importFlow }, 'Yedeği yapıştır'),
             h('button', { type: 'button', 'class': 'btn btn-sm btn-danger-o', id: 'pg-reset', onclick: resetFlow }, UI.icon('trash', 14), 'Sıfırla')),
@@ -245,14 +245,14 @@
         .then(function (txt) {
           if (txt == null || !String(txt).trim()) return;
           var r = Store.importText(txt);
-          if (r.ok) { UI.toast('Yedek yüklendi.'); render(); }
+          if (r.ok) { UI.toast('Yedek yüklendi'); render(); }
           else UI.toast(r.error, 'bad');
         });
     }
     function resetFlow() {
       UI.modal({ title: 'İlerleme sıfırlansın mı?', body: h('p', {}, 'Tüm bölgelerin kutuları, istatistikleri ve simülasyon skorları silinir. Bu işlem geri alınamaz.'),
         actions: [{ label: 'Vazgeç', value: false }, { label: 'Sıfırla', primary: true, danger: true, value: true }] })
-        .then(function (v) { if (v) { Store.reset(); render(); UI.toast('İlerleme sıfırlandı.'); } });
+        .then(function (v) { if (v) { Store.reset(); render(); UI.toast('İlerleme sıfırlandı'); } });
     }
 
     render();

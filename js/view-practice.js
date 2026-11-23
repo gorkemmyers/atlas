@@ -304,7 +304,7 @@
 
       /* geri bildirim: sonuç kutusu + (yanlışsa) dokunulan il + ayrıntı kartı · Sonraki alt şeritte */
       var hinted = res === 'ok' && extra.hints > 0;
-      var titleTxt = res === 'ok' ? (hinted ? 'Doğru — ipucuyla' : 'Doğru!') : res === 'skip' ? 'Atlandı' : 'Yanlış';
+      var titleTxt = res === 'ok' ? (hinted ? 'Doğru — ipucuyla' : 'Doğru') : res === 'skip' ? 'Atlandı' : 'Yanlış';
       var given = null;
       if (res === 'bad') {
         if (extra.clicked) given = 'Dokunduğun: ' + nameOf(extra.clicked);

@@ -898,7 +898,7 @@
       map.setLocatorTarget(R.ids[0]);
 
       var hinted = res === 'ok' && extra.hints > 0;
-      var titleTxt = res === 'ok' ? (hinted ? 'Doğru — ipucuyla' : 'Doğru!') : res === 'skip' ? 'Atlandı' : 'Yanlış';
+      var titleTxt = res === 'ok' ? (hinted ? 'Doğru — ipucuyla' : 'Doğru') : res === 'skip' ? 'Atlandı' : 'Yanlış';
       var given = null, nearNote = null;
       if (res === 'bad') {
         if (extra.clicked) {

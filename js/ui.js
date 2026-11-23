@@ -48,7 +48,7 @@
   };
   function icon(name, size) {
     size = size || 18;
-    return s('svg', { 'class': 'ic', width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' },
+    return s('svg', { 'class': 'ic', width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 1.5, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true', focusable: 'false' },
       s('path', { d: ICONS[name] || ICONS.info }));
   }
 

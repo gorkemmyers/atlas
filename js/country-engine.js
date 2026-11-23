@@ -1349,7 +1349,7 @@
       fb.hidden = false;
       fb.className = 'feedback fb-' + (ok ? 'ok' : (outcome === 'skip' ? 'skip' : 'bad'));
       fb.appendChild(h('div', { 'class': 'fb-box' },
-        h('div', { 'class': 'fb-title' }, UI.icon(ok ? 'check' : 'x', 18), h('b', {}, ok ? 'Doğru!' : (outcome === 'skip' ? 'Pas' : 'Yanlış'))),
+        h('div', { 'class': 'fb-title' }, UI.icon(ok ? 'check' : 'x', 18), h('b', {}, ok ? 'Doğru' : (outcome === 'skip' ? 'Pas' : 'Yanlış'))),
         h('p', { 'class': 'fb-ans' }, q.explain)));
 
       var nextBtn = h('button', { type: 'button', 'class': 'btn btn-primary', id: 'q-next', onclick: nextQ },
@@ -1593,7 +1593,7 @@
       var hintEl = U.$('#sim-hint', panelBody); if (hintEl) hintEl.hidden = true;
       var fb = U.$('#sim-fb', panelBody);
       fb.hidden = false; fb.className = 'feedback fb-' + (round.ok ? 'ok' : 'bad');
-      var verdict = round.ok ? 'Tam isabet!' : (guessed && pack.uById[guessed] ? 'Yanlış seçim: ' + pack.uById[guessed].name : 'Sınır dışında');
+      var verdict = round.ok ? 'Tam isabet' : (guessed && pack.uById[guessed] ? 'Yanlış seçim: ' + pack.uById[guessed].name : 'Sınır dışında');
       fb.appendChild(h('div', { 'class': 'fb-box' },
         h('div', { 'class': 'fb-title' }, UI.icon(round.ok ? 'check' : 'x', 18), h('b', {}, verdict)),
         h('div', { 'class': 'sim-res' },

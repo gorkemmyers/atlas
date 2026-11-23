@@ -378,7 +378,7 @@
     try {
       var l = document.createElement('link');
       l.rel = 'stylesheet';
-      l.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap';
+      l.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Barlow+Condensed:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap';
       document.head.appendChild(l);
     } catch (e) { /* çevrimdışı olabilir */ }
   }

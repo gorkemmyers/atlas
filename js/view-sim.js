@@ -209,7 +209,7 @@
       fb.hidden = false; fb.className = 'feedback fb-' + (round.ok ? 'ok' : 'bad');
       var last = game.idx >= cfg.rounds;
       var nextBtn = h('button', { type: 'button', 'class': 'btn btn-primary', id: 'sim-next', onclick: nextRound }, last ? 'Sonucu gör' : 'Sonraki tur', UI.icon('arrow', 16));
-      var verdict = round.ok ? 'Doğru il!' : (guessed ? 'Yanlış il: ' + B.shortName(D.pById[guessed]) : 'Denizde / sınır dışında');
+      var verdict = round.ok ? 'Doğru il' : (guessed ? 'Yanlış il: ' + B.shortName(D.pById[guessed]) : 'Denizde / sınır dışında');
       fb.appendChild(h('div', { 'class': 'fb-box' },
         h('div', { 'class': 'fb-title' }, UI.icon(round.ok ? 'check' : 'x', 18), h('b', {}, verdict)),
         h('div', { 'class': 'sim-res' },
@@ -263,7 +263,7 @@
           h('div', {}, h('b', {}, ok + ' / ' + n), h('small', {}, 'doğru il')),
           h('div', {}, h('b', {}, U.fmtKm(avg)), h('small', {}, 'ort. mesafe')),
           game.rounds.some(function (r) { return r.hints > 0; }) ? h('div', {}, h('b', {}, game.rounds.filter(function (r) { return r.hints > 0; }).length), h('small', {}, 'turda ipucu')) : null)));
-      panelBody.appendChild(h('p', { 'class': 'lead' }, title + (isBest ? ' — yeni rekor!' : '') + ' · süre ' + U.fmtTime((Date.now() - game.t0) / 1000)));
+      panelBody.appendChild(h('p', { 'class': 'lead' }, title + (isBest ? ' · yeni rekor' : '') + ' · süre ' + U.fmtTime((Date.now() - game.t0) / 1000)));
       panelBody.appendChild(UI.sec('Turlar', h('ol', { 'class': 'rounds' }, game.rounds.map(function (r) {
         var p = D.pById[r.target];
         return h('li', { 'class': r.ok ? 'ok' : 'bad' }, UI.icon(r.ok ? 'check' : 'x', 15), h('div', {}, h('b', {}, p.vi), h('small', {}, r.clue.meaning.split(' → ')[0] + (r.ok ? '' : ' · ' + U.fmtKm(r.km) + ' uzakta' + (r.guessed ? ', sen: ' + B.shortName(D.pById[r.guessed]) : '')) + (r.hints > 0 ? ' · ipucuyla' : ''))), h('span', { 'class': 'rpts' }, U.fmtInt(r.score)));
@@ -528,7 +528,7 @@
       fb.hidden = false; fb.className = 'feedback fb-' + (round.ok ? 'ok' : 'bad');
       var last = game.idx >= cfg.rounds;
       var nextBtn = h('button', { type: 'button', 'class': 'btn btn-primary', id: 'sim-next', onclick: nextRound }, last ? 'Sonucu gör' : 'Sonraki tur', UI.icon('arrow', 16));
-      var verdict = round.ok ? 'Doğru yer!' : (guessed ? 'Yanlış yer: ' + P[guessed].short + (round.sameScript ? ' (yazı doğru: ' + S[p.main[0]].tr + ')' : '') : 'Denizde / sınır dışında');
+      var verdict = round.ok ? 'Doğru yer' : (guessed ? 'Yanlış yer: ' + P[guessed].short + (round.sameScript ? ' (yazı doğru: ' + S[p.main[0]].tr + ')' : '') : 'Denizde / sınır dışında');
       fb.appendChild(h('div', { 'class': 'fb-box' },
         h('div', { 'class': 'fb-title' }, UI.icon(round.ok ? 'check' : 'x', 18), h('b', {}, verdict)),
         h('div', { 'class': 'sim-res' },
@@ -585,7 +585,7 @@
           h('div', {}, h('b', {}, ok + ' / ' + n), h('small', {}, 'doğru yer')),
           h('div', {}, h('b', {}, U.fmtKm(avg)), h('small', {}, 'ort. mesafe')),
           game.rounds.some(function (r) { return r.hints > 0; }) ? h('div', {}, h('b', {}, game.rounds.filter(function (r) { return r.hints > 0; }).length), h('small', {}, 'turda ipucu')) : null)));
-      panelBody.appendChild(h('p', { 'class': 'lead' }, title + (isBest ? ' — yeni rekor!' : '') + ' · süre ' + U.fmtTime((Date.now() - game.t0) / 1000)));
+      panelBody.appendChild(h('p', { 'class': 'lead' }, title + (isBest ? ' · yeni rekor' : '') + ' · süre ' + U.fmtTime((Date.now() - game.t0) / 1000)));
       panelBody.appendChild(UI.sec('Turlar', h('ol', { 'class': 'rounds' }, game.rounds.map(function (r) {
         var p = P[r.target];
         return h('li', { 'class': r.ok ? 'ok' : 'bad' }, UI.icon(r.ok ? 'check' : 'x', 15), h('div', {}, h('b', {}, p.short), h('small', {}, r.clue.meaning.split(' → ')[0] + (r.ok ? '' : ' · ' + U.fmtKm(r.km) + ' uzakta' + (r.guessed ? ', sen: ' + P[r.guessed].short : '')) + (r.hints > 0 ? ' · ipucuyla' : ''))), h('span', { 'class': 'rpts' }, U.fmtInt(r.score)));

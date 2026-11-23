@@ -148,7 +148,7 @@
       type: 'button', 'class': 'btn btn-sm',
       onclick: function () {
         U.copy(mail).then(function (ok) {
-          UI.toast(ok ? 'E-posta adresi kopyalandı.' : 'Kopyalanamadı: ' + mail, ok ? null : 'bad');
+          UI.toast(ok ? 'E-posta adresi kopyalandı' : 'Kopyalanamadı: ' + mail, ok ? null : 'bad');
         });
       }
     }, UI.icon('copy', 14), 'E-postayı kopyala');
